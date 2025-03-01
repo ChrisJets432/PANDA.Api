@@ -2,7 +2,7 @@
 
 ### Introduction
 
-This project was created for the spec of aaa. As requested I timeboxed this project and limited it to around five hours of coding and then around a hour of documentation.
+This project was created for the spec of (Patient Appointment Network Data Application)[https://github.com/airelogic/tech-test-portal/blob/main/Patient-Appointment-Backend/README.md]. As requested I timeboxed this project and limited it to around five hours of coding and then around a hour of documentation.
 
 It was produced in #C .Net Core Web API. Was created with using a MSSql database, but was coded with the ability to connect to a PostgresSql database also. For querying with data sources it was produced using Dapper and ability to use any ADO.Net standard connector. I did think on using EntityFramework with it being a modern alternative, but with having limited time to produce the project it was something I had not worked with for a few years.
 
