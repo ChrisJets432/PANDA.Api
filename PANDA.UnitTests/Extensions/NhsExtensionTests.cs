@@ -4,7 +4,7 @@ using PANDA.Common.Extensions;
 namespace PANDA.UnitTests.Extensions;
 
 [TestFixture]
-public class NhsExtentionTests
+public class NhsExtensionTests
 {
     [Test]
     public void TryParse_ValidNhsNumber_ReturnsTrueAndCleansNumber()

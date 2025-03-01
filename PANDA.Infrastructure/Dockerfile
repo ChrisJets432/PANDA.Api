@@ -1,23 +1,9 @@
-﻿FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS base
-USER $APP_UID
-WORKDIR /app
-EXPOSE 8080
-EXPOSE 8081
+﻿FROM mcr.microsoft.com/mssql/server:2022-latest
 
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-ARG BUILD_CONFIGURATION=Release
-WORKDIR /src
-COPY ["PANDA.Api/PANDA.Api.csproj", "PANDA.Api/"]
-RUN dotnet restore "PANDA.Api/PANDA.Api.csproj"
-COPY . .
-WORKDIR "/src/PANDA.Api"
-RUN dotnet build "PANDA.Api.csproj" -c $BUILD_CONFIGURATION -o /app/build
+ENV ACCEPT_EULA=Y
+ENV SA_PASSWORD=cvBTa??5647210
+ENV MSSQL_PID=sa
 
-FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "PANDA.Api.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+EXPOSE 1433
 
-FROM base AS final
-WORKDIR /app
-COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "PANDA.Api.dll"]
+CMD ["/opt/mssql/bin/sqlservr"]

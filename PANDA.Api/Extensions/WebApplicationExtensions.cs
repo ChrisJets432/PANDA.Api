@@ -1,23 +1,61 @@
 using System.Net;
+using System.Reflection;
 using System.Web;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Localization;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using PANDA.Common.Converters;
 using PANDA.Common.Core.Authentication;
 
-namespace PANDA.Common.Extensions;
+namespace PANDA.Api.Extensions;
 
 public static class WebApplicationExtensions
 {
-    public static void InitiateServices(this WebApplicationBuilder builder, string @namespace, bool includeAuthentication = true, params string[] additionalSpaces)
+    private static readonly List<string> _whitelist = ["Service", "Data", "ViewBuilder", "Repository"];
+    
+    public static IServiceCollection ScopeDependencyInjection(this IServiceCollection services, string baseSpace, params string[] additionalSpaces)
+    {
+        var spaces = new List<string> { baseSpace };
+        spaces.AddRange(additionalSpaces.Select(x => 
+            x.StartsWith('.') 
+                ? baseSpace + x 
+                : x.Contains('{') && x.Contains('}') 
+                    ? string.Format(x, baseSpace) 
+                    : x
+        ));
+
+        foreach (var space in spaces)
+        {
+            try
+            {
+                Assembly.Load(space)
+                    .GetTypes()
+                    .Where(s => _whitelist.Any(s.Name.EndsWith) && !s.IsInterface)
+                    .ToList()
+                    .ForEach(appService =>
+                    {
+                        var @interface = appService.GetInterface($"I{appService.Name}");
+
+                        if (@interface != null)
+                        {
+                            services.AddSingleton(@interface, appService);
+                        }
+                    });
+            }
+            catch (FileNotFoundException)
+            {
+                // ignored
+            }
+        }
+
+        return services;
+    }
+    
+    public static WebApplicationBuilder InitiateServices(this WebApplicationBuilder builder, string @namespace, bool includeAuthentication = true, params string[] additionalSpaces)
     {
         builder.Services.AddCors();
         builder.Services.AddAntiforgery();
         builder.Services.AddRazorPages();
+        builder.Services.AddControllers();
         builder.Services.AddControllersWithViews();
         builder.Services.AddHttpContextAccessor();
         
@@ -34,10 +72,7 @@ public static class WebApplicationExtensions
 
         if (includeAuthentication)
         {
-            builder.Services.AddSession(options =>
-                {
-                    options.IdleTimeout = TimeSpan.FromMinutes(Convert.ToInt32(ConfigurationManager.ByPath("Environment:Timeout") ?? "30"));
-                })
+            builder.Services.AddSession()
                 .AddAuthentication(options =>
                 {
                     options.DefaultAuthenticateScheme = AuthenticationCommon.SchemeName;
@@ -46,9 +81,11 @@ public static class WebApplicationExtensions
                 })
                 .AddScheme<AuthenticationSchemeOptions, AuthenticationHandler>(AuthenticationCommon.SchemeName, null);
         }
+
+        return builder;
     }
 
-    public static void InitiateApp(this WebApplication app)
+    public static WebApplication InitiateApp(this WebApplication app)
     {
         // Configure the HTTP request pipeline.
         if (!app.Environment.IsDevelopment())
@@ -59,7 +96,6 @@ public static class WebApplicationExtensions
         }
 
         app.UseHttpsRedirection();
-        app.UseStaticFiles();
         app.UseSession();
 
         app.UseRouting();
@@ -67,8 +103,7 @@ public static class WebApplicationExtensions
         app.UseAuthorization();
         app.UseAuthentication();
 
-        app.MapRazorPages();
-        app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}");
+        app.MapControllerRoute(name: "default", pattern: "{controller}/{action}");
         app.MapControllers();
 
         //app.UseStatusCodePagesWithReExecute("/component/systemautomatic/{0}");
@@ -93,48 +128,7 @@ public static class WebApplicationExtensions
                     return new ProviderCultureResult(cultureCode);
                 }));
         });
-    }
 
-    public static void AuthenticateRequests(this WebApplication app)
-    {
-        app
-            .UseStatusCodePages(async context =>
-            {
-                var response = context.HttpContext.Response;
-                var path = context.HttpContext.Request.Path.ToString().ToLower();
-
-                if (!(path.Contains("/image/") || path.EndsWith(".css") || path.EndsWith(".js") || path.EndsWith(".gif") || path.EndsWith(".jpg") || path.EndsWith(".png") || path.EndsWith(".svg")))
-                {
-                    if (new[] { (int)HttpStatusCode.Unauthorized, (int)HttpStatusCode.Forbidden }.Contains(response.StatusCode))
-                    {
-                        response.Redirect($"{context.HttpContext.ApplicationPath(false)}/login/sign-in?f={HttpUtility.UrlEncode(context.HttpContext.Request.Path.Value + context.HttpContext.Request.QueryString)}&e={response.StatusCode}");
-                    }
-
-                    if (new[] { (int)HttpStatusCode.NotFound }.Contains(response.StatusCode))
-                    {
-                        response.Redirect($"{context.HttpContext.ApplicationPath(false)}/login/sign-in?e={response.StatusCode}");
-                    }
-                }
-            });
-
-        app
-            .Use(async (context, next) =>
-            {
-                var token = context.Session.GetString(AuthenticationCommon.Static.Token);
-                if (!string.IsNullOrEmpty(token))
-                {
-                    //context.Request.Headers.TryAddOrUpdate("Authorization", token);
-                    //context.Response.Headers.TryAddOrUpdate("Authorization", token);
-                }
-
-                string path = context.Request.Path.ToString().ToLower();
-                if (path.Contains("/image/") || path.EndsWith(".css") || path.EndsWith(".js") || path.EndsWith(".gif") || path.EndsWith(".jpg") || path.EndsWith(".png") || path.EndsWith(".svg"))
-                {
-                    TimeSpan maxAge = new(31, 0, 0, 0);
-                    context.Response.Headers.Append("Cache-Control", "max-age=" + maxAge.TotalSeconds.ToString("0"));
-                }
-
-                await next();
-            });
+        return app;
     }
 }

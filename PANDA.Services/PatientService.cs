@@ -1,4 +1,5 @@
 using PANDA.Common;
+using PANDA.Common.Extensions;
 using PANDA.Common.Resources;
 using PANDA.Infrastructure;
 using PANDA.Services.Models;
@@ -6,28 +7,44 @@ using PANDA.Services.Core;
 
 namespace PANDA.Services;
 
-public interface IAppointmentService : IService<Appointment, string>
-{}
-
-public class AppointmentService(IAppointmentRepository appointmentRepository) : IAppointmentService
+public interface IPatientService : IService<Patient, string>
 {
-    public List<Appointment> List()
+    Patient? GetWithAppointments(string? id);
+}
+
+public class PatientService(IPatientRepository patientRepository) : IPatientService
+{
+    public List<Patient> List()
     {
-        return appointmentRepository
+        return patientRepository
             .List()
-            .Select(Appointment.FromDatabase)
-            .OfType<Appointment>()
+            .Select(Patient.FromDatabase)
+            .OfType<Patient>()
             .ToList();
     }
 
-    public Appointment? Get(string? id)
+    public Patient? Get(string? id)
     {
         return !string.IsNullOrEmpty(id)
-            ? Appointment.FromDatabase(appointmentRepository.Get(id))
+            ? Patient.FromDatabase(patientRepository.Get(id))
             : null;
     }
 
-    public OperationResult Add(Appointment? entity, out Appointment? addedEntity)
+    public Patient? GetWithAppointments(string? id)
+    {
+        ArgumentNullException.ThrowIfNull(id);
+        
+        var patient = Get(id) ?? throw new KeyNotFoundException("Patient not found");
+        patient.Appointments = patientRepository
+            .GetAppointments(patient.NhsNumber)
+            .Select(Appointment.FromDatabase)
+            .OfType<Appointment>()
+            .ToList();
+        
+        return patient;
+    }
+
+    public OperationResult Add(Patient? entity, out Patient? addedEntity)
     {
         addedEntity = null;
         
@@ -35,29 +52,43 @@ public class AppointmentService(IAppointmentRepository appointmentRepository) : 
         {
             return Localisation.Error_NoEntity;
         }
+
+        if (NhsExtensions.TryParse(entity.NhsNumber, out var nhsNumber) && !string.IsNullOrEmpty(nhsNumber))
+        {
+            entity.NhsNumber = nhsNumber;
+        }
+        else
+        {
+            return Localisation.Error_InvalidNhsNumber;
+        }
+
+        if (PostcodeExtensions.TryParse(entity.Postcode, out var postcode) && !string.IsNullOrEmpty(postcode))
+        {
+            entity.Postcode = postcode;
+        }
         
-        appointmentRepository.Add(Appointment.ToDatabase(entity), out var added);
+        patientRepository.Add(Patient.ToDatabase(entity), out var added);
 
         if (added == null)
         {
             return Localisation.Error_EntityNotAdded;
         }
         
-        addedEntity = Appointment.FromDatabase(added);
+        addedEntity = Patient.FromDatabase(added);
 
         return true;
     }
 
-    public OperationResult Update(Appointment? entity)
+    public OperationResult Update(Patient? entity)
     {
-        return appointmentRepository.Update(Appointment.ToDatabase(entity))
+        return patientRepository.Update(Patient.ToDatabase(entity))
             ? true
             : Localisation.Error_NothingUpdated;
     }
 
     public OperationResult Delete(string? id)
     {
-        return appointmentRepository.Delete(id)
+        return patientRepository.Delete(id)
             ? true
             : Localisation.Error_NothingDeleted;
     }

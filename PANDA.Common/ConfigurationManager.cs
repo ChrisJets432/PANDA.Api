@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Configuration;
 
-namespace AdenFitness.Common
+namespace PANDA.Common
 {
     public static class ConfigurationManager
     {
@@ -24,7 +24,7 @@ namespace AdenFitness.Common
             while (index < sections.Count())
             {
                 var current = sections.ElementAtOrDefault(index);
-                section = !string.IsNullOrEmpty(current) ? section.GetSection(current) : null;
+                section = !string.IsNullOrEmpty(current) ? section?.GetSection(current) : null;
                 index++;
             }
 

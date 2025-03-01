@@ -1,4 +1,4 @@
-namespace PANDA.Api.Core;
+namespace PANDA.Services.Core;
 
 public interface IIdentifiable<out T>
 {

@@ -4,7 +4,7 @@ using Npgsql;
 using PANDA.Common;
 using PANDA.Common.Configuration;
 
-namespace PANDA.Infrastructure.Core;
+namespace PANDA.Infrastructure.Engines;
 
 public class DatabaseProvider
 {

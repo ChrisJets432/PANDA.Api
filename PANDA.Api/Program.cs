@@ -1,25 +1,29 @@
-var builder = WebApplication.CreateBuilder(args);
+using PANDA.Api.Extensions;
 
-// Add services to the container.
+// Build
+// --------
 
-builder.Services.AddControllers();
+var builder = WebApplication
+    .CreateBuilder(args)
+    .InitiateServices(nameof(PANDA), additionalSpaces: [".Services", ".Infrastructure"]);
+
+// Add additional Services
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var app = builder.Build();
+// Run
+// --------
 
-// Configure the HTTP request pipeline.
+var app = builder
+    .Build()
+    .InitiateApp();
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
-app.MapControllers();
 
 app.Run();

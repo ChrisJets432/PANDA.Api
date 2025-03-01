@@ -10,8 +10,8 @@ namespace PANDA.Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class PatientController(
-    ILogger<PatientController> logger,
-    IPatientService patientService
-) : BaseController<IPatientService, PatientBody, Patient, string>(logger, patientService)
+public class AppointmentController(
+    ILogger<AppointmentController> logger,
+    IAppointmentService appointmentService
+) : BaseController<IAppointmentService, AppointmentBody, Appointment, string>(logger, appointmentService)
 { }

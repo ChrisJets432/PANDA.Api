@@ -14,7 +14,7 @@ namespace PANDA.Common.Resources {
     [System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Localisation {
+    public class Localisation {
         
         private static System.Resources.ResourceManager resourceMan;
         
@@ -25,7 +25,7 @@ namespace PANDA.Common.Resources {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static System.Resources.ResourceManager ResourceManager {
+        public static System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.Equals(null, resourceMan)) {
                     System.Resources.ResourceManager temp = new System.Resources.ResourceManager("PANDA.Common.Resources.Localisation", typeof(Localisation).Assembly);
@@ -36,12 +36,186 @@ namespace PANDA.Common.Resources {
         }
         
         [System.ComponentModel.EditorBrowsableAttribute(System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static System.Globalization.CultureInfo Culture {
+        public static System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        public static string Error_InvalidPostcode {
+            get {
+                return ResourceManager.GetString("Error_InvalidPostcode", resourceCulture);
+            }
+        }
+        
+        public static string Error_NothingUpdated {
+            get {
+                return ResourceManager.GetString("Error_NothingUpdated", resourceCulture);
+            }
+        }
+        
+        public static string Error_NoEntity {
+            get {
+                return ResourceManager.GetString("Error_NoEntity", resourceCulture);
+            }
+        }
+        
+        public static string Error_EntityNotAdded {
+            get {
+                return ResourceManager.GetString("Error_EntityNotAdded", resourceCulture);
+            }
+        }
+        
+        public static string Error_NothingDeleted {
+            get {
+                return ResourceManager.GetString("Error_NothingDeleted", resourceCulture);
+            }
+        }
+        
+        public static string Error_InvalidNhsNumber {
+            get {
+                return ResourceManager.GetString("Error_InvalidNhsNumber", resourceCulture);
+            }
+        }
+        
+        public static string Error_ServerException {
+            get {
+                return ResourceManager.GetString("Error_ServerException", resourceCulture);
+            }
+        }
+        
+        public static string Error_FieldRequired {
+            get {
+                return ResourceManager.GetString("Error_FieldRequired", resourceCulture);
+            }
+        }
+        
+        public static string Error_InvalidField {
+            get {
+                return ResourceManager.GetString("Error_InvalidField", resourceCulture);
+            }
+        }
+        
+        public static string Field_DateOfBirth {
+            get {
+                return ResourceManager.GetString("Field_DateOfBirth", resourceCulture);
+            }
+        }
+        
+        public static string Field_NhsNumber {
+            get {
+                return ResourceManager.GetString("Field_NhsNumber", resourceCulture);
+            }
+        }
+        
+        public static string Field_Postcode {
+            get {
+                return ResourceManager.GetString("Field_Postcode", resourceCulture);
+            }
+        }
+        
+        public static string Field_Name {
+            get {
+                return ResourceManager.GetString("Field_Name", resourceCulture);
+            }
+        }
+        
+        public static string Input_Hour {
+            get {
+                return ResourceManager.GetString("Input_Hour", resourceCulture);
+            }
+        }
+        
+        public static string Input_Minute {
+            get {
+                return ResourceManager.GetString("Input_Minute", resourceCulture);
+            }
+        }
+        
+        public static string Input_Second {
+            get {
+                return ResourceManager.GetString("Input_Second", resourceCulture);
+            }
+        }
+        
+        public static string Field_PatientId {
+            get {
+                return ResourceManager.GetString("Field_PatientId", resourceCulture);
+            }
+        }
+        
+        public static string Field_Duration {
+            get {
+                return ResourceManager.GetString("Field_Duration", resourceCulture);
+            }
+        }
+        
+        public static string Field_Time {
+            get {
+                return ResourceManager.GetString("Field_Time", resourceCulture);
+            }
+        }
+        
+        public static string Field_Status {
+            get {
+                return ResourceManager.GetString("Field_Status", resourceCulture);
+            }
+        }
+        
+        public static string Field_Department {
+            get {
+                return ResourceManager.GetString("Field_Department", resourceCulture);
+            }
+        }
+        
+        public static string Message_SuccessAdd {
+            get {
+                return ResourceManager.GetString("Message_SuccessAdd", resourceCulture);
+            }
+        }
+        
+        public static string Field_Identifier {
+            get {
+                return ResourceManager.GetString("Field_Identifier", resourceCulture);
+            }
+        }
+        
+        public static string Error_EntityNotFound {
+            get {
+                return ResourceManager.GetString("Error_EntityNotFound", resourceCulture);
+            }
+        }
+        
+        public static string Message_SuccessDelete {
+            get {
+                return ResourceManager.GetString("Message_SuccessDelete", resourceCulture);
+            }
+        }
+        
+        public static string Message_SuccessUpdate {
+            get {
+                return ResourceManager.GetString("Message_SuccessUpdate", resourceCulture);
+            }
+        }
+        
+        public static string Error_NoEntityType {
+            get {
+                return ResourceManager.GetString("Error_NoEntityType", resourceCulture);
+            }
+        }
+        
+        public static string Entity_Patient {
+            get {
+                return ResourceManager.GetString("Entity_Patient", resourceCulture);
+            }
+        }
+        
+        public static string Entity_Appointment {
+            get {
+                return ResourceManager.GetString("Entity_Appointment", resourceCulture);
             }
         }
     }
